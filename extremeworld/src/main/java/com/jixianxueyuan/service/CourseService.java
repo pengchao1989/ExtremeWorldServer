@@ -1,0 +1,40 @@
+package com.jixianxueyuan.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jixianxueyuan.entity.Course;
+import com.jixianxueyuan.repository.CourseDao;
+
+//Spring Bean的标识.
+@Component
+//类中所有public函数都纳入事务管理的标识.
+@Transactional
+public class CourseService
+{
+	private CourseDao courseDao;
+	
+	public Course getCourse(Long id)
+	{
+		return courseDao.findOne(id);
+	}
+	
+	public void saveCourse(Course entity)
+	{
+		courseDao.save(entity);
+	}
+	
+	public List<Course> getRevisions(Long id)
+	{
+		return courseDao.findByPid(id);
+	}
+
+	@Autowired
+	public void setCourseDao(CourseDao courseDao)
+	{
+		this.courseDao = courseDao;
+	}
+}
