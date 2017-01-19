@@ -124,8 +124,8 @@ public class MyResponse {
 	 * 取出Shiro中的当前用户Id.
 	 */
 	private Long getCurrentUserId() {
-		ShiroUser user = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
-		return user.id;
+		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+		return securityUser.getId();
 	}
 	
 	private byte[] getCurrentToken(){

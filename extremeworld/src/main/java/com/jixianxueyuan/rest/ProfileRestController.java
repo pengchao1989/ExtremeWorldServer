@@ -1,8 +1,10 @@
 package com.jixianxueyuan.rest;
 
 import com.jixianxueyuan.ali.IMHelper;
+import com.jixianxueyuan.service.account.SecurityUser;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -55,7 +57,7 @@ public class ProfileRestController {
 	public MyResponse updateAttribute(@RequestBody UserAttributeRequestDTO attribute, UriComponentsBuilder uriBuilder){
 		
 		User user = userService.getUser(getCurrentUserId());
-		
+
 		if(user == null){
 			return MyResponse.err(MyErrorCode.NO_USER);
 		}
@@ -116,8 +118,8 @@ public class ProfileRestController {
 	 * 取出Shiro中的当前用户Id.
 	 */
 	private Long getCurrentUserId() {
-		ShiroUser user = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
-		return user.id;
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        return securityUser.getId();
 	}
 	
 }

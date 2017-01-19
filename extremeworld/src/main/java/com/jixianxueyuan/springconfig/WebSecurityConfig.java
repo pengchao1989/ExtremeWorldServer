@@ -49,7 +49,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 /*               .and()
                 .formLogin().loginPage("/login").permitAll()*/
                 .and()
-                .logout().permitAll();
+                .logout().permitAll()
+                .and().csrf().disable();
 /*        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
         entryPoint.setRealmName("Spring Boot");
 
