@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 /**
  * Created by 23653 on 2016/12/20.
@@ -27,22 +28,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     MyAuthenticationProvider authenticationProvider;
 
+    @Autowired
+    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception{
+    }
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
 
                 .antMatchers(StaticParams.PATHREGX.CSS,StaticParams.PATHREGX.JS,StaticParams.PATHREGX.IMG, StaticParams.PATHREGX.API).permitAll()//无需访问权限
+/*                .antMatchers(StaticParams.PATHREGX.ADMIN).hasAuthority(StaticParams.USERROLE.ROLE_ADMIN)//admin角色访问权限
 
-                .antMatchers(StaticParams.PATHREGX.ADMIN).hasAuthority(StaticParams.USERROLE.ROLE_ADMIN)//admin角色访问权限
-
-                .antMatchers(StaticParams.PATHREGX.API_SECURE).hasAuthority(StaticParams.USERROLE.ROLE_USER)//user角色访问权限
+                .antMatchers(StaticParams.PATHREGX.API_SECURE).hasAuthority(StaticParams.USERROLE.ROLE_USER)//user角色访问权限*/
 
                 .anyRequest()//all others request authentication
                 .authenticated()
-/*                .and()
+                .and()
+                .httpBasic()
+/*               .and()
                 .formLogin().loginPage("/login").permitAll()*/
                 .and()
                 .logout().permitAll();
+/*        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
+        entryPoint.setRealmName("Spring Boot");
+
+        http.httpBasic().authenticationEntryPoint(entryPoint).and().*/
     }
 
 
@@ -50,8 +61,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 /*        auth.inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER");*/
-        //auth.userDetailsService(securityUserDetailService).passwordEncoder(passwordEncoder());
+        //auth.userDetailsService(securityUserDetailService);
         auth.authenticationProvider(authenticationProvider);
-        auth.eraseCredentials(false);//不删除凭据
+        //auth.eraseCredentials(false);//不删除凭据
     }
 }

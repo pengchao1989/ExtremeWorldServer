@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 /**
  * Created by 23653 on 2016/12/21.
  */
-@Service("userDetailsService")
+@Service
 public class SecurityUserDetailService implements UserDetailsService {
 
     @Autowired

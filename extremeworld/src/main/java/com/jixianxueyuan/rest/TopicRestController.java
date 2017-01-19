@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Validator;
 
+import com.jixianxueyuan.service.account.SecurityUser;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +47,7 @@ import com.jixianxueyuan.service.account.ShiroDbRealm.ShiroUser;
 @RestController
 @RequestMapping(value = "/api/secure/v1/{hobby}/topic")
 /*@PreAuthorize("authenticated and hasPermission('user')")*/
+/*@PreAuthorize("hasAuthority('ROLE_USER')")*/
 public class TopicRestController
 {
 	private static Logger logger = LoggerFactory.getLogger(TopicRestController.class);
@@ -62,7 +65,8 @@ public class TopicRestController
 	
 	@Autowired
 	private TopicScoreService topicScoreService;
-	
+
+
 	@RequestMapping( method = RequestMethod.GET, produces = MediaTypes.JSON_UTF_8)
 	public  MyResponse list(
 			@PathVariable String hobby,
@@ -241,7 +245,7 @@ public class TopicRestController
 	 * 取出Shiro中的当前用户Id.
 	 */
 	private Long getCurrentUserId() {
-		ShiroUser user = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
-		return user.id;
+		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+		return securityUser.getId();
 	}
 }

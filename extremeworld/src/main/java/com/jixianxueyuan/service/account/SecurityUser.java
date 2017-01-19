@@ -30,7 +30,7 @@ public class SecurityUser extends UserBase implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        SimpleGrantedAuthority authority  = new SimpleGrantedAuthority("ROLE_USER" /*+ getRoles()*/);
+        SimpleGrantedAuthority authority  = new SimpleGrantedAuthority(getRoles());
         authorities.add(authority);
         return authorities;
     }
