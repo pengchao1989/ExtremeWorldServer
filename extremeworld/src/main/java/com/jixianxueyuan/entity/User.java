@@ -48,6 +48,7 @@ public class User extends UserBase
     private String versionCode;
     private String versionName;
 	private long point;
+
 	
 	//private List<Topic> topics = new ArrayList<Topic>();
 	
