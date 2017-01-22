@@ -19,6 +19,7 @@ public interface TopicDao extends PagingAndSortingRepository<Topic, Long>
 	
 	public Page<Topic> findByUserIdAndStatus(Long user, int status, Pageable pageable);
 	public Page<Topic> findByUserIdAndStatusAndMediaWrapNotNull(Long user, int status, Pageable pageable);
+	public Topic findByUrl(String url);
 	
 	public Page<Topic> findByTypeAndStatus(String type, int status, Pageable pageable);
 	

@@ -1,11 +1,25 @@
 package com.jixianxueyuan.rest;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import javax.validation.Validator;
 
+import com.jixianxueyuan.config.MyErrorCode;
+import com.jixianxueyuan.entity.*;
+import com.jixianxueyuan.rest.dto.request.WeiXinWebPage;
 import com.jixianxueyuan.service.account.SecurityUser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +42,6 @@ import org.springside.modules.web.MediaTypes;
 import com.jixianxueyuan.config.HobbyPathConfig;
 import com.jixianxueyuan.config.TopicStatus;
 import com.jixianxueyuan.config.TopicType;
-import com.jixianxueyuan.entity.Collection;
-import com.jixianxueyuan.entity.Hobby;
-import com.jixianxueyuan.entity.Topic;
-import com.jixianxueyuan.entity.TopicScore;
-import com.jixianxueyuan.entity.User;
 import com.jixianxueyuan.rest.dto.MyPage;
 import com.jixianxueyuan.rest.dto.MyResponse;
 import com.jixianxueyuan.rest.dto.TopicDTO;
@@ -42,6 +51,7 @@ import com.jixianxueyuan.service.TopicScoreService;
 import com.jixianxueyuan.service.TopicService;
 import com.jixianxueyuan.service.UserService;
 import com.jixianxueyuan.service.account.ShiroDbRealm.ShiroUser;
+import sun.net.www.http.HttpClient;
 
 
 @RestController
@@ -238,6 +248,118 @@ public class TopicRestController
 		TopicDTO dto = BeanMapper.map(result, TopicDTO.class);
 
 		return MyResponse.ok(dto, true);
+	}
+
+	@RequestMapping(value = "/submit_weixin_page",method = RequestMethod.POST,consumes = MediaTypes.JSON_UTF_8)
+	public MyResponse submitWeiXinPage(
+			@PathVariable String hobby,
+            @RequestBody WeiXinWebPage weiXinWebPage)
+	{
+
+		String title_keyword = "    var msg_title = \"";
+		String desc_keyword = "    var msg_desc = \"";
+		String thumb_keyword = "    var msg_cdn_url = \"";
+
+        Topic havingTopic = topicService.findByUrl(weiXinWebPage.getUrl());
+        if (havingTopic != null){
+            return MyResponse.err(MyErrorCode.WEI_XIN_PAGE_ALREADY_INCLUDED);
+        }
+
+
+		try {
+			URL url = new URL("http://mp.weixin.qq.com/s/4L7O1jsAafh8rVpb0UYANQ");
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setDoOutput(true);
+			urlConnection.setDoInput(true);
+			urlConnection.setUseCaches(false);
+
+
+			InputStream in = urlConnection.getInputStream();
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(in));
+
+			HashMap<String,String> careParams = new HashMap<String,String>();
+			String line = bufferedReader.readLine();
+			while (line != null){
+				if (line.contains(title_keyword)){
+					String msg_title_value = line.replace(title_keyword, "");
+                    msg_title_value = msg_title_value.replace("\";", "");
+                    logger.debug(msg_title_value);
+					careParams.put(title_keyword, msg_title_value);
+				}
+				if (line.contains(desc_keyword)){
+					String msg_desc_value = line.replace(desc_keyword, "");
+                    msg_desc_value = msg_desc_value.replace("\";", "");
+					careParams.put(desc_keyword, msg_desc_value);
+                    logger.debug(msg_desc_value);
+				}
+				if (line.contains(thumb_keyword)){
+					String msg_thumb_value = line.replace(thumb_keyword, "");
+                    msg_thumb_value = msg_thumb_value.replace("\";", "");
+					careParams.put(thumb_keyword, msg_thumb_value);
+                    logger.debug(msg_thumb_value);
+				}
+
+				line = bufferedReader.readLine();
+			}
+
+            bufferedReader.close();
+
+            if (careParams.containsKey(title_keyword)){
+                Topic topic = new Topic();
+                topic.setStatus(TopicStatus.PUBLIC);
+                topic.setType(TopicType.NEWS);
+
+                Long  userId = getCurrentUserId();
+                User user = new User();
+                user.setId(userId);
+                topic.setUser(user);
+
+                if (topic.getHobbys() == null){
+                    List<Hobby>  hobbyList = new ArrayList<Hobby>();
+                    Long hobbyId = HobbyPathConfig.getHobbyId(hobby);
+                    Hobby hobbyEntity = new Hobby();
+                    hobbyEntity.setId(hobbyId);
+                    hobbyList.add(hobbyEntity);
+                    topic.setHobbys(hobbyList);
+                }
+
+                topic.setTitle(careParams.get(title_keyword));
+                topic.setUrl("http://mp.weixin.qq.com/s/4L7O1jsAafh8rVpb0UYANQ");
+                topic.setExcerpt(careParams.get(desc_keyword));
+
+                String thumbImgUrl = careParams.get(thumb_keyword);
+                if (StringUtils.isNoneEmpty(thumbImgUrl)){
+
+                    List<Media> mediaList = new ArrayList<Media>();
+                    Media media = new Media();
+                    media.setType("img");
+                    media.setPath(thumbImgUrl);
+
+                    mediaList.add(media);
+
+                    MediaWrap mediaWrap = new MediaWrap();
+                    mediaWrap.setMedias(mediaList);
+
+                    topic.setMediaWrap(mediaWrap);
+                }
+
+
+                topicService.saveTopic(topic);
+
+                return MyResponse.ok(topic, true);
+            }
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+        return MyResponse.err(MyErrorCode.WEI_XIN_PAGE_ALREADY_INCLUDED);
 	}
 	
 
