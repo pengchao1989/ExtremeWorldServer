@@ -267,7 +267,7 @@ public class TopicRestController
 
 
 		try {
-			URL url = new URL("http://mp.weixin.qq.com/s/4L7O1jsAafh8rVpb0UYANQ");
+			URL url = new URL(weiXinWebPage.getUrl());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
 			urlConnection.setRequestMethod("GET");
@@ -327,7 +327,7 @@ public class TopicRestController
                 }
 
                 topic.setTitle(careParams.get(title_keyword));
-                topic.setUrl("http://mp.weixin.qq.com/s/4L7O1jsAafh8rVpb0UYANQ");
+                topic.setUrl(weiXinWebPage.getUrl());
                 topic.setExcerpt(careParams.get(desc_keyword));
 
                 String thumbImgUrl = careParams.get(thumb_keyword);
@@ -349,7 +349,9 @@ public class TopicRestController
 
                 topicService.saveTopic(topic);
 
-                return MyResponse.ok(topic, true);
+                TopicDTO topicDTO = BeanMapper.map(topic, TopicDTO.class);
+
+                return MyResponse.ok(topicDTO, true);
             }
 
 		} catch (MalformedURLException e) {
@@ -359,7 +361,7 @@ public class TopicRestController
 		}
 
 
-        return MyResponse.err(MyErrorCode.WEI_XIN_PAGE_ALREADY_INCLUDED);
+        return MyResponse.err(MyErrorCode.WEI_XIN_PAGE_ERROR);
 	}
 	
 
