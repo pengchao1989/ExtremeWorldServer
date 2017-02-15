@@ -5,10 +5,12 @@ import java.util.List;
 
 import javax.validation.Validator;
 
+import com.jixianxueyuan.service.account.SecurityUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -129,8 +131,8 @@ public class ExhibitionRestController {
 	 * 取出Shiro中的当前用户Id.
 	 */
 	private Long getCurrentUserId() {
-		ShiroUser user = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
-		return user.id;
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        return securityUser.getId();
 	}
 	
 }

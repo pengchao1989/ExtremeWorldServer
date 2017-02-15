@@ -13,6 +13,8 @@ public enum MyErrorCode {
 	VERIFICATION_CODE_ERROR(10009,"verification code failed"),
 	NO_USER(10010, "user not found"),
 	PASSWORD_FAILED(10011,"password failed"),
+	WEI_XIN_PAGE_ALREADY_INCLUDED(10012,"the wei xin page is already included"),
+	WEI_XIN_PAGE_ERROR(10013, "the wei xin page is error"),
 	UNKNOW_ERROR(1001,"unknow error");
 	
 	private int errorCode;

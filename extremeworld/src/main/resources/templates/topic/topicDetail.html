@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+
+    <style type="text/css">
+        body {
+            background-color: #FFFFFF;
+        }
+        .ui.menu .item img.logo {
+            margin-right: 1.5em;
+        }
+        .main.container {
+            margin-top: 3em;
+            margin-bottom: 10em;
+        }
+        .wireframe {
+            margin-top: 2em;
+        }
+        .ui.footer.segment {
+            margin: 5em 0em 0em;
+            padding: 5em 0em;
+        }
+    </style>
+</head>
+<body>
+    <div th:include="/layout/share_header"></div>
+
+    <div class="ui main text container">
+        <h1 th:text="${topic.title}"></h1>
+
+        <div  th:if="${topic.videoDetail.videoSource != null}">
+            <video th:src="${topic.videoDetail.videoSource}" controls="controls"  width="320" height="240"></video>
+        </div>
+
+        <div class="ui list">
+            <div class="item">
+                <img class="ui avatar image" th:src="${topic.user.avatar} + '!webAvatarSmall'"/>
+                <div class="content">
+                    <a class="header" th:text="${topic.user.name}"></a>
+                    <div class="description" th:text="${topic.createTime}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${inviter != null}">
+            <div id="button_join" class="fluid ui red button">点击立即加入滑板圈</div>
+        </div>
+    </div>
+
+    <div th:include="/layout/footer"></div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#button_join").click(function(){
+            console.log("todo join");
+        });
+    });
+</script>
+</html>

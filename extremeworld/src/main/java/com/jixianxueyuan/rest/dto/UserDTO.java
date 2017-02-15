@@ -30,6 +30,10 @@ public class UserDTO
     private String city;
     private String district;
 	private String token;
+	private long point;
+	private String device;
+	private String versionName;
+
 	
 	private List<UserInterestDTO> interests;
 	
@@ -173,5 +177,28 @@ public class UserDTO
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
+
+	public long getPoint() {
+		return point;
+	}
+
+	public void setPoint(long point) {
+		this.point = point;
+	}
+
+	public String getDevice() {
+		return device;
+	}
+
+	public void setDevice(String device) {
+		this.device = device;
+	}
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public void setVersionName(String versionName) {
+		this.versionName = versionName;
+	}
 }

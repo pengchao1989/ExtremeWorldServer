@@ -203,7 +203,10 @@ public class TopicService
 	public List<Topic> getAllUserChallenge(Long userId, Long hobbyId){
 		return topicDao.findByUserIdAndHobbyIdAndTypeAndStatus(userId, hobbyId, TopicType.CHALLENGE, TopicStatus.PUBLIC);
 	}
-	
+
+	public Topic findByUrl(String url){
+		return topicDao.findByUrl(url);
+	}
 	/**
 	 * 创建分页请求.
 	 */

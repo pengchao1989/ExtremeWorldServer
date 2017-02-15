@@ -10,9 +10,11 @@ import javax.persistence.Table;
 public class AppKey extends IdEntity{
 	private String baichuanAppKey;
 	private String baichuanAppSecret;
-	
+	private String duibaAppKey;
+	private String duibaAppSecret;
+
 	private Hobby hobby;
-	
+
 	public String getBaichuanAppKey() {
 		return baichuanAppKey;
 	}
@@ -25,7 +27,20 @@ public class AppKey extends IdEntity{
 	public void setBaichuanAppSecret(String baichuanAppSecret) {
 		this.baichuanAppSecret = baichuanAppSecret;
 	}
-	
+
+
+	public String getDuibaAppKey() {
+		return duibaAppKey;
+	}
+	public void setDuibaAppKey(String duibaAppKey) {
+		this.duibaAppKey = duibaAppKey;
+	}
+	public String getDuibaAppSecret() {
+		return duibaAppSecret;
+	}
+	public void setDuibaAppSecret(String duibaAppSecret) {
+		this.duibaAppSecret = duibaAppSecret;
+	}
 	@OneToOne
 	@JoinColumn( name = "hobby_id" )
 	public Hobby getHobby() {

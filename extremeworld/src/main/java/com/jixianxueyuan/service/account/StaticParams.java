@@ -29,8 +29,8 @@ public class StaticParams {
 	public static class PATH {
 		public static final String VIEW = "view";
 		public static final String ADMIN = "admin";
-		public static final String API = "api";
-		public static final String API_SECURE = "api";
+		public static final String API = "api/v1";
+		public static final String API_SECURE = "api/secure";
 		public static final String RESOURCE = "resource";
 		public static final String STATIC = "static";
 		public static final String JS = "js";

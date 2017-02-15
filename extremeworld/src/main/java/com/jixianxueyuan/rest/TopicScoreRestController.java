@@ -6,11 +6,13 @@ import java.util.Map.Entry;
 
 import javax.validation.Validator;
 
+import com.jixianxueyuan.service.account.SecurityUser;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -152,7 +154,7 @@ public class TopicScoreRestController {
 	}
 	
 	private Long getCurrentUserId() {
-		ShiroUser user = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
-		return user.id;
+        SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        return securityUser.getId();
 	}
 }
