@@ -1,5 +1,6 @@
 package com.jixianxueyuan.repository;
 
+import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,17 +29,26 @@ public interface TopicDao extends PagingAndSortingRepository<Topic, Long>
 	
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND t.status=?")
 	public Page<Topic> findByHobby(Long hobbyId, int status, Pageable pageable);
+
+	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND t.status=? AND createTime <?")
+	public Page<Topic> findByHobbyAndCreateTime(Long hobbyId, int status, Date createTime, Pageable pageable);
 	
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND status=?")
 	public Page<Topic> findByHobbyAndType(Long hobbyId, String type, int status, Pageable pageable);
-	
+
+	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND status=? AND createTime <?")
+	public Page<Topic> findByHobbyAndTypeAndCreateTime(Long hobbyId, String type, int status, Date createTime, Pageable pageable);
+
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND t.taxonomy.id=? AND status=?")
 	public Page<Topic> findByHobbyAndTypeAndTaxonomy(Long hobbyId, String type, Long taxonomyId, int status, Pageable pageable);
-	
+
+	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND t.taxonomy.id=? AND status=? AND createTime <?")
+	public Page<Topic> findByHobbyAndTypeAndTaxonomyAndCreateTime(Long hobbyId, String type, Long taxonomyId, int status, Date createTime, Pageable pageable);
+
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND status=? AND t.fine=1")
 	public Page<Topic> findByHobbyAndFine(Long hobbyId, int status, Pageable pageable);
 	
-	
+
 	
 	//求总分(总分=每个course最高的那个得分 累加)
 /*	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND t.user.id=? AND type=? AND status=? ORDER BY t.score DESC")
