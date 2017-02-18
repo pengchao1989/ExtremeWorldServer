@@ -24,7 +24,12 @@ public class StaticParams {
 		public static final String JS = getPathRex(PATH.JS);
 		public static final String CSS = getPathRex(PATH.CSS);
 		public static final String IMG = getPathRex(PATH.IMG);
-	}
+
+		public static final String SKATEBOARD = "/skateboard/**";
+        public static final String SEMANTIC = "/semantic/**";
+        public static final String FAVICON = "/favicon.ico";
+        public static final String LOGIN = "/login/**";
+    }
 	
 	public static class PATH {
 		public static final String VIEW = "view";

@@ -2,27 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Title</title>
-
-    <style type="text/css">
-        body {
-            background-color: #FFFFFF;
-        }
-        .ui.menu .item img.logo {
-            margin-right: 1.5em;
-        }
-        .main.container {
-            margin-top: 3em;
-            margin-bottom: 10em;
-        }
-        .wireframe {
-            margin-top: 2em;
-        }
-        .ui.footer.segment {
-            margin: 5em 0em 0em;
-            padding: 5em 0em;
-        }
-    </style>
+    <title th:text="${topic.title}"></title>
 </head>
 <body>
     <div th:include="/layout/share_header"></div>
@@ -51,10 +31,11 @@
 
     <div th:include="/layout/footer"></div>
 </body>
-<script type="text/javascript">
+<script th:inline="javascript">
     $(document).ready(function() {
         $("#button_join").click(function(){
             console.log("todo join");
+            self.location='/login/qqlogin?inviteid=[[ ${inviter.id}]]';
         });
     });
 </script>

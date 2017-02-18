@@ -37,7 +37,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
 
-                .antMatchers(StaticParams.PATHREGX.STATIC, StaticParams.PATHREGX.CSS,StaticParams.PATHREGX.JS,StaticParams.PATHREGX.IMG, StaticParams.PATHREGX.API).permitAll()//无需访问权限
+                .antMatchers(StaticParams.PATHREGX.STATIC, StaticParams.PATHREGX.CSS,StaticParams.PATHREGX.JS,StaticParams.PATHREGX.IMG,
+                        StaticParams.PATHREGX.API,StaticParams.PATHREGX.LOGIN,StaticParams.PATHREGX.SKATEBOARD,StaticParams.PATHREGX.SEMANTIC,
+                        StaticParams.PATHREGX.FAVICON).permitAll()//无需访问权限
 /*                .antMatchers(StaticParams.PATHREGX.ADMIN).hasAuthority(StaticParams.USERROLE.ROLE_ADMIN)//admin角色访问权限
 
                 .antMatchers(StaticParams.PATHREGX.API_SECURE).hasAuthority(StaticParams.USERROLE.ROLE_USER)//user角色访问权限*/

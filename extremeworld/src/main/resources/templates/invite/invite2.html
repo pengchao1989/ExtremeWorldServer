@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
-    <title>Title</title>
-
+    <title th:text="${inviter.name} + '邀请你加入滑板圈'"></title>
     <link rel="stylesheet" type="text/css" th:href="@{/semantic/components/reset.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/semantic/components/site.css}"/>
 
@@ -27,16 +26,25 @@
 
     <script src="//cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/jquery/2.2.3/jquery.slim.min.js"></script>
-
 </head>
 <body>
-<div class="ui fixed inverted menu">
-    <div class="ui container">
-        <a href="#" class="header item">
-            滑板圈APP--原创视频与专业教学汇聚地
-        </a>
-    </div>
-</div>
+    <div class="ui main text container">
+        <div class="ui main text container center">
+            <h1 class="ui teal header center">滑板圈</h1>
+            <h4 class="ui teal header">专业的滑板教学与原创视频分享社区</h4>
+        </div>
 
+        <div id="button_join" class="fluid ui red button">点击立即加入</div>
+
+    </div>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $("#button_join").click(function(){
+                console.log("todo join");
+                self.location='/login/qqlogin?inviteid=[[ ${inviter.id}]]';
+            });
+        });
+    </script>
 </body>
 </html>
