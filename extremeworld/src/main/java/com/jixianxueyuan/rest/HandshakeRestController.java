@@ -2,6 +2,8 @@ package com.jixianxueyuan.rest;
 
 import java.util.List;
 
+import com.jixianxueyuan.config.PointType;
+import com.jixianxueyuan.service.PointService;
 import com.jixianxueyuan.service.account.SecurityUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -37,6 +39,9 @@ public class HandshakeRestController {
 	
 	@Autowired
 	BaseInfoService baseInfoService;
+
+	@Autowired
+	PointService pointService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaTypes.JSON_UTF_8)
 	MyResponse get(){
@@ -74,7 +79,10 @@ public class HandshakeRestController {
 				if (StringUtils.isNotEmpty(handshakeRequest.getVersionName())) {
 					user.setVersionName(handshakeRequest.getVersionName());
 				}
-				
+
+				//每日登陆积分
+				pointService.addPoint(PointType.LOGIN, handshakeRequest.getUserId());
+
 				userService.saveUser(user);
 			}
 		}

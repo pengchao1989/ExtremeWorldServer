@@ -1,5 +1,6 @@
 package com.jixianxueyuan.service;
 
+import com.jixianxueyuan.config.PointType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +44,9 @@ public class SubReplyService {
 	
 	@Autowired
 	private PushManage pushManage;
+
+	@Autowired
+	PointService pointService;
 	
 	public SubReply getSubReply(long id){
 		return subReplyDao.findOne(id);
@@ -118,6 +122,13 @@ public class SubReplyService {
 						remindDao.save(remind);
 						//push
 						pushManage.pushMessage(reply.getUser(), PushMessageType.REMIND, remind);
+			}
+		}
+
+		//每日回复主题积分
+		if (subReply.getUser() != null) {
+			if (subReply.getUser().getId() > 0) {
+				pointService.addPoint(PointType.REPLY, subReply.getUser().getId());
 			}
 		}
 
