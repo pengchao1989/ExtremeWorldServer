@@ -1,5 +1,6 @@
 package com.jixianxueyuan.service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,28 +170,49 @@ public class TopicService
 		return topicDao.findByTypeAndStatus(type,TopicStatus.PUBLIC,pageRequest);
 	}
 	
-	public Page<Topic> getTopicByHobby(Long hobbyId, int pageNumber, int pageSize,String sortType)
+	public Page<Topic> getTopicByHobby(Long hobbyId, int pageNumber, int pageSize,String sortType, Long timestamp)
 	{
 		PageRequest pageRequest = buildPageRequest(pageNumber, pageSize, sortType);
-		
-		if(hobbyId == 0L)
-		{
-			return topicDao.findAll(pageRequest);
+
+		if (timestamp == 0L) {
+			if(hobbyId == 0L)
+			{
+				return topicDao.findAll(pageRequest);
+			}
+
+			return topicDao.findByHobby(hobbyId, TopicStatus.PUBLIC ,pageRequest);
 		}
-		
-		return topicDao.findByHobby(hobbyId, TopicStatus.PUBLIC ,pageRequest);
+		else {
+			Date date = new Date(timestamp);
+			if(hobbyId == 0L) {
+				return topicDao.findAll(pageRequest);
+			}
+			return topicDao.findByHobbyAndCreateTime(hobbyId, TopicStatus.PUBLIC , date, pageRequest);
+		}
 	}
-	
-	public Page<Topic> getTopicByHobbyAndType(Long hobbyId, String type, int pageNumber, int pageSize, String sortType)
+
+	public Page<Topic> getTopicByHobbyAndType(Long hobbyId, String type, int pageNumber, int pageSize, String sortType, Long timestamp)
 	{
 		PageRequest pageRequest = buildPageRequest(pageNumber, pageSize, sortType);
-		return topicDao.findByHobbyAndType(hobbyId, type, TopicStatus.PUBLIC, pageRequest);
+		if (0 == timestamp) {
+			return topicDao.findByHobbyAndType(hobbyId, type, TopicStatus.PUBLIC, pageRequest);
+		}
+		else {
+			Date date = new Date(timestamp);
+			return topicDao.findByHobbyAndTypeAndCreateTime(hobbyId, type, TopicStatus.PUBLIC, date, pageRequest);
+		}
 	}
-	
-	public Page<Topic> getTopicByHobbyAndTypeAndTaxonomy(Long hobbyId, String type, Long taxonomyId, int pageNumber, int pageSize, String sortType)
+
+	public Page<Topic> getTopicByHobbyAndTypeAndTaxonomy(Long hobbyId, String type, Long taxonomyId, int pageNumber, int pageSize, String sortType, Long timestamp)
 	{
 		PageRequest pageRequest = buildPageRequest(pageNumber, pageSize, sortType);
-		return topicDao.findByHobbyAndTypeAndTaxonomy(hobbyId, type, taxonomyId, TopicStatus.PUBLIC ,pageRequest);
+		if (0 == timestamp) {
+			return topicDao.findByHobbyAndTypeAndTaxonomy(hobbyId, type, taxonomyId, TopicStatus.PUBLIC ,pageRequest);
+		}
+		else {
+			Date date = new Date(timestamp);
+			return topicDao.findByHobbyAndTypeAndTaxonomyAndCreateTime(hobbyId, type, taxonomyId, TopicStatus.PUBLIC , date,pageRequest);
+		}
 	}
 	
 	public Page<Topic> getFineTopic(Long hobbyId, int pageNumber, int pageSize, String sortType)

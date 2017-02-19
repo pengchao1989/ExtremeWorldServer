@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,9 +82,10 @@ public class TopicRestController
 			@RequestParam (value = "magicType", defaultValue = "") String magicType,
 			@RequestParam (value = "courseId", defaultValue = "0") long courseId,
 			@RequestParam(value = "taxonomyId", defaultValue = "0") Long taxonomyId,
-			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
-			@RequestParam(value = "page.size", defaultValue = PAGE_SIZE) int pageSize,
-			@RequestParam(value = "sortType", defaultValue = "auto") String sortType)
+			@RequestParam(value = "sortType", defaultValue = "auto") String sortType,
+			@RequestParam(value = "page", required = false, defaultValue = "1") int pageNumber,
+			@RequestParam(value = "page.size", required = false, defaultValue = PAGE_SIZE) int pageSize,
+			@RequestParam(value = "timestamp", required = false, defaultValue = "0") Long timestamp)
 	{
 		
 		long hobbyId = HobbyPathConfig.getHobbyId(hobby);
@@ -93,16 +95,17 @@ public class TopicRestController
 		switch(type)
 		{
 		case TopicType.ALL:
-			topicPageSource = topicService.getTopicByHobby(hobbyId, pageNumber, pageSize, sortType);
+			topicPageSource = topicService.getTopicByHobby(hobbyId, pageNumber, pageSize, sortType, timestamp);
 			break;
 		case TopicType.DISCUSS:
 		case TopicType.NEWS:
 		case TopicType.VIDEO:
 		case TopicType.S_VIDEO:
-			if(0 == taxonomyId){
-				topicPageSource = topicService.getTopicByHobbyAndType(hobbyId, type, pageNumber, pageSize, sortType);
-			}else{
-				topicPageSource = topicService.getTopicByHobbyAndTypeAndTaxonomy(hobbyId, type, taxonomyId, pageNumber, pageSize, sortType);
+			if (0 == taxonomyId) {
+				topicPageSource = topicService.getTopicByHobbyAndType(hobbyId, type, pageNumber, pageSize, sortType, timestamp);
+			}
+			else {
+				topicPageSource = topicService.getTopicByHobbyAndTypeAndTaxonomy(hobbyId, type, taxonomyId, pageNumber, pageSize, sortType, timestamp);
 			}
 			break;
 		case TopicType.COURSE:
@@ -117,7 +120,7 @@ public class TopicRestController
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaTypes.JSON_UTF_8)
 	public MyResponse get(@PathVariable("id") Long topicId){
-		
+
 		Long userId = getCurrentUserId();
 		Topic topic = topicService.getTopic(topicId);
 		if(topic == null){
@@ -150,6 +153,35 @@ public class TopicRestController
 
 		return MyResponse.ok(topicDto,true);
 	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaTypes.JSON)
+	public MyResponse delete(@PathVariable("id") Long topicId) {
+
+		Topic topic = topicService.getTopic(topicId);
+		if (topic == null) {
+			String message = "话题不存在(topicId:" + topicId + ")";
+			logger.warn(message);
+			throw new RestException(HttpStatus.NOT_FOUND, message);
+		}
+
+		boolean enableDelete = false;
+		User user = userService.getUser(getCurrentUserId());
+		if (user.getRoles() == UserAuthorityType.admin) {
+			enableDelete = true;
+		}
+		else if (topic.getUser().getId() == user.getId()) {
+			enableDelete = true;
+		}
+		if (enableDelete) {
+			topic.setStatus(TopicStatus.DELETE);
+			topicService.saveTopic(topic);
+			return MyResponse.ok(null, false);
+		}
+		else {
+			return MyResponse.err(MyErrorCode.NO_PRIVILEGE);
+		}
+	}
+
 	@RequestMapping(value = "/extra/{id}", method = RequestMethod.GET, produces = MediaTypes.JSON_UTF_8)
 	public MyResponse getTopicOfMe(@PathVariable("id") Long topicId){
 		

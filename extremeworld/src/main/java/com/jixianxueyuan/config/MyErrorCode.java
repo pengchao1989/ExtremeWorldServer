@@ -15,8 +15,9 @@ public enum MyErrorCode {
 	PASSWORD_FAILED(10011,"password failed"),
 	WEI_XIN_PAGE_ALREADY_INCLUDED(10012,"the wei xin page is already included"),
 	WEI_XIN_PAGE_ERROR(10013, "the wei xin page is error"),
+	NO_PRIVILEGE(10014, "non-privileged"),
 	UNKNOW_ERROR(1001,"unknow error");
-	
+
 	private int errorCode;
 	private String errorInfo;
 	

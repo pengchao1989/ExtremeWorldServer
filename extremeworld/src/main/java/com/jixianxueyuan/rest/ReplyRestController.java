@@ -2,11 +2,17 @@ package com.jixianxueyuan.rest;
 
 import javax.validation.Validator;
 
+import com.jixianxueyuan.config.MyErrorCode;
+import com.jixianxueyuan.config.UserAuthorityType;
+import com.jixianxueyuan.entity.User;
+import com.jixianxueyuan.service.UserService;
+import com.jixianxueyuan.service.account.SecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +39,10 @@ public class ReplyRestController
 	
 	@Autowired
 	private ReplyService replyService;
-	
+
+	@Autowired
+	private UserService userService;
+
 	@RequestMapping(method = RequestMethod.GET, produces = MediaTypes.JSON_UTF_8)
 	public MyResponse list(
 			@RequestParam(value = "topicId") Long topicId,
@@ -68,7 +77,30 @@ public class ReplyRestController
 		
 		return MyResponse.ok(replyDTO,true);
 	}
-	
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaTypes.JSON)
+	public MyResponse delete(@PathVariable("id") Long id)
+	{
+		Reply reply = replyService.getReply(id);
+		if(reply == null)
+		{
+			String message = "回复不存在(id:" + id + ")";
+			logger.warn(message);
+			throw new RestException(HttpStatus.NOT_FOUND, message);
+		}
+
+		boolean enableDelete = false;
+		User user = userService.getUser(getCurrentUserId());
+		if (user.getRoles() == UserAuthorityType.admin || reply.getUser().getId() == user.getId()) {
+			enableDelete = true;
+		}
+		if (enableDelete) {
+			return MyResponse.ok(null, false);
+		}
+
+		return MyResponse.err(MyErrorCode.NO_PRIVILEGE);
+	}
+
 	//consumes = MediaTypes.JSON 若设置了MediaTYpes 则在http的header中设置Content-Type为application/json才能成功映射，否则返回415
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaTypes.JSON)
 	public MyResponse create(@RequestBody Reply reply)//@RequestBody Reply reply
@@ -83,5 +115,12 @@ public class ReplyRestController
 
 		return MyResponse.ok(dto,true);
 	}
-	
+
+	/**
+	 * 取出Shiro中的当前用户Id.
+	 */
+	private Long getCurrentUserId() {
+		SecurityUser securityUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+		return securityUser.getId();
+	}
 }
