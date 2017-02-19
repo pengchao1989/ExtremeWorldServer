@@ -16,7 +16,7 @@ import java.util.Vector;
 
 import javax.validation.Validator;
 
-import com.jixianxueyuan.config.MyErrorCode;
+import com.jixianxueyuan.config.*;
 import com.jixianxueyuan.entity.*;
 import com.jixianxueyuan.rest.dto.request.WeiXinWebPage;
 import com.jixianxueyuan.service.account.SecurityUser;
@@ -40,9 +40,6 @@ import org.springside.modules.beanvalidator.BeanValidators;
 import org.springside.modules.mapper.BeanMapper;
 import org.springside.modules.web.MediaTypes;
 
-import com.jixianxueyuan.config.HobbyPathConfig;
-import com.jixianxueyuan.config.TopicStatus;
-import com.jixianxueyuan.config.TopicType;
 import com.jixianxueyuan.rest.dto.MyPage;
 import com.jixianxueyuan.rest.dto.MyResponse;
 import com.jixianxueyuan.rest.dto.TopicDTO;
@@ -123,7 +120,7 @@ public class TopicRestController
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaTypes.JSON_UTF_8)
 	public MyResponse get(@PathVariable("id") Long topicId){
-		
+
 		Long userId = getCurrentUserId();
 		Topic topic = topicService.getTopic(topicId);
 		if(topic == null){
@@ -156,6 +153,35 @@ public class TopicRestController
 
 		return MyResponse.ok(topicDto,true);
 	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaTypes.JSON)
+	public MyResponse delete(@PathVariable("id") Long topicId) {
+
+		Topic topic = topicService.getTopic(topicId);
+		if (topic == null) {
+			String message = "话题不存在(topicId:" + topicId + ")";
+			logger.warn(message);
+			throw new RestException(HttpStatus.NOT_FOUND, message);
+		}
+
+		boolean enableDelete = false;
+		User user = userService.getUser(getCurrentUserId());
+		if (user.getRoles() == UserAuthorityType.admin) {
+			enableDelete = true;
+		}
+		else if (topic.getUser().getId() == user.getId()) {
+			enableDelete = true;
+		}
+		if (enableDelete) {
+			topic.setStatus(TopicStatus.DELETE);
+			topicService.saveTopic(topic);
+			return MyResponse.ok(null, false);
+		}
+		else {
+			return MyResponse.err(MyErrorCode.NO_PRIVILEGE);
+		}
+	}
+
 	@RequestMapping(value = "/extra/{id}", method = RequestMethod.GET, produces = MediaTypes.JSON_UTF_8)
 	public MyResponse getTopicOfMe(@PathVariable("id") Long topicId){
 		

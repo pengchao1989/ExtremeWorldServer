@@ -14,6 +14,7 @@ public class UserDTO
 	private Long id;
 	private String loginName;
 	private String name;
+	private String roles;
 	private Date registerDate;
 	private String gender;
 	private String birth;
@@ -59,6 +60,8 @@ public class UserDTO
 	{
 		this.name = name;
 	}
+	public String getRoles() { return  roles; }
+	public void setRoles(String roles) { this.roles = roles; }
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
 	public Date getRegisterDate()

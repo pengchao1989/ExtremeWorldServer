@@ -30,19 +30,19 @@ public interface TopicDao extends PagingAndSortingRepository<Topic, Long>
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND t.status=?")
 	public Page<Topic> findByHobby(Long hobbyId, int status, Pageable pageable);
 
-	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND t.status=? AND createTime <?")
+	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND t.status=? AND t.createTime <?")
 	public Page<Topic> findByHobbyAndCreateTime(Long hobbyId, int status, Date createTime, Pageable pageable);
 	
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND status=?")
 	public Page<Topic> findByHobbyAndType(Long hobbyId, String type, int status, Pageable pageable);
 
-	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND status=? AND createTime <?")
+	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND status=? AND t.createTime <?")
 	public Page<Topic> findByHobbyAndTypeAndCreateTime(Long hobbyId, String type, int status, Date createTime, Pageable pageable);
 
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND t.taxonomy.id=? AND status=?")
 	public Page<Topic> findByHobbyAndTypeAndTaxonomy(Long hobbyId, String type, Long taxonomyId, int status, Pageable pageable);
 
-	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND t.taxonomy.id=? AND status=? AND createTime <?")
+	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND type=? AND t.taxonomy.id=? AND status=? AND t.createTime <?")
 	public Page<Topic> findByHobbyAndTypeAndTaxonomyAndCreateTime(Long hobbyId, String type, Long taxonomyId, int status, Date createTime, Pageable pageable);
 
 	@Query("SELECT t FROM Topic t LEFT JOIN t.hobbys h WHERE h.id=? AND status=? AND t.fine=1")
